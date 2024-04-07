@@ -4,7 +4,72 @@ openAutoJumpTurn = false
 UserVar timeWait = 140 "点击延迟速度"
 UserVar loadingWait = 10 "黑屏加载等待延迟时间"
 Global quickClickWait // 快速点击延迟速度(优化点击用)
-quickClickWait = timeWait * 0.65 // 计算优化延迟
+quickClickWait = timeWait * 0.65// 计算优化延迟
+
+Const BoardColor = "52505F" // 判断是否过关时候用
+Const BoardColorDark = "52505F" // 判断是否升级时候用
+
+//Const BoardColor2 = "26202D" // 判断是否过关时候用
+//Const BoardColorDark2 = "26323D"// 判断是否升级时候用
+
+Function PressStartButton()
+	MoveTo 1222, 713
+	Delay quickClickWait
+	LeftClick 1
+	Delay quickClickWait
+End Function
+
+Function PushTower(posx, posy, key, levelUP0, levelUP1, levelUP2)
+	MoveTo posx, posy // 移动鼠标
+	KeyPress key, 1 // 选中指定塔
+	Delay quickClickWait
+	LeftClick 1 // 放置
+	Delay quickClickWait
+	LeftClick 1 // 选中
+	For levelUP0
+		Delay quickClickWait 
+		KeyPress ",", 1// 001升级
+	EndFor
+	For levelUP1
+		Delay quickClickWait 
+		KeyPress ".", 1// 001升级
+	EndFor
+	For levelUP2
+		Delay quickClickWait 
+		KeyPress "/", 1// 001升级
+	Next
+	Delay quickClickWait
+	KeyPress "Esc", 1 // 退出页面
+End Function// 放塔函数
+
+Function SeelToower(posx, posy)
+	MoveTo posx, posy// 移动鼠标
+	Delay quickClickWait
+	LeftClick 1// 选中塔
+	Delay quickClickWait
+	KeyPress "BackSpace", 1 // 出售塔
+	Delay quickClickWait
+End Function// 售卖塔
+
+Function UpgradeTower(posx, posy, levelUP0, levelUP1, levelUP2)
+	MoveTo posx, posy // 移动鼠标
+	Delay quickClickWait
+	LeftClick 1 // 选中指定塔
+	For levelUP0
+		Delay quickClickWait 
+		KeyPress ",", 1// 001升级
+	EndFor
+	For levelUP1
+		Delay quickClickWait 
+		KeyPress ".", 1// 001升级
+	EndFor
+	For levelUP2
+		Delay quickClickWait 
+		KeyPress "/", 1// 001升级
+	Next
+	Delay timeWait
+	KeyPress "Esc", 1 // 退出页面
+End Function
 
 Rem 起始点
 
@@ -91,182 +156,24 @@ If openAutoJumpTurn = false Then
 	End If
 End If
 
-KeyPress "K", 1//放置猴村
-MoveTo 660, 240
-Delay 40
-LeftClick 1
-Delay timeWait
-LeftClick 1
-Delay timeWait
-KeyPress "/", 1// 001升级
-Delay timeWait
-KeyPress "/", 1// 001升级
-Delay timeWait 
-KeyPress "K", 1// 放置猴村
-MoveTo 580, 240
-Delay quickClickWait
-LeftClick 1
-Delay timeWait
-LeftClick 1
-Delay timeWait
-KeyPress ",", 1//100升级
-Delay timeWait
-KeyPress "/", 1//001升级
-Delay timeWait
-KeyPress "/", 1//001升级
-Delay timeWait
-
-KeyPress "A", 1 // 法师猴
-MoveTo 550, 325
-Delay quickClickWait
-LeftClick 1
-Delay timeWait
-LeftClick 1
-Delay timeWait
-KeyPress ".", 1 // 法师010升级
-Delay timeWait
-KeyPress ".", 1 // 法师010升级
-Delay timeWait
-KeyPress "/", 1 // 法师001升级
-Delay timeWait
-KeyPress "/", 1 // 法师001升级
-Delay timeWait
-KeyPress "/", 1 // 法师001升级
-Delay timeWait
-
-// 有了攻击猴 点击开始回合 优化时间
-MoveTo 1222, 713
-Delay quickClickWait
-LeftClick 1
-Delay quickClickWait
-
-
-KeyPress "U", 1 // 放置英雄
-MoveTo 610, 325
-Delay timeWait
-LeftClick 1
-Delay timeWait
-
-// 加速游戏
-MoveTo 1222, 713
-Delay quickClickWait
-LeftClick 1
-Delay quickClickWait 
-
-KeyPress "F", 1 // 放置炼金猴子
-MoveTo 675, 325
-Delay quickClickWait
-LeftClick 1
-Delay timeWait
-LeftClick 1
-Delay timeWait
-KeyPress ",", 1//100升级
-Delay timeWait
-KeyPress ",", 1//100升级
-Delay timeWait
-KeyPress ",", 1//100升级
-Delay timeWait
-KeyPress ",", 1//100升级
-Delay timeWait
-KeyPress "/", 1//001升级
-Delay timeWait
-
-KeyPress "X", 1 // 放置潜水艇1
-MoveTo 740, 310
-Delay quickClickWait
-LeftClick 1
-Delay timeWait
-LeftClick 1
-Delay timeWait
-KeyPress ",", 1//100升级
-Delay timeWait
-KeyPress ",", 1//100升级
-Delay timeWait
-KeyPress "/", 1//001升级
-Delay timeWait
-KeyPress "/", 1//001升级
-Delay timeWait
-KeyPress "/", 1//001升级
-Delay timeWait
-
-KeyPress "X", 1 // 放置潜水艇2
-MoveTo 740, 260
-Delay quickClickWait
-LeftClick 1
-Delay timeWait
-LeftClick 1
-Delay timeWait
-KeyPress ",", 1//100升级
-Delay timeWait
-KeyPress ",", 1//100升级
-Delay timeWait
-KeyPress "/", 1//001升级
-Delay timeWait
-KeyPress "/", 1//001升级
-Delay timeWait
-KeyPress "/", 1//001升级
-Delay timeWait
-
-// 出售猴村1
-MoveTo 680, 240
-Delay quickClickWait
-LeftClick 1
-Delay timeWait
-KeyPress "BackSpace", 1
-Delay quickClickWait
-// 出售猴村2
-MoveTo 575, 240
-Delay quickClickWait
-LeftClick 1
-Delay timeWait
-KeyPress "BackSpace", 1
-Delay quickClickWait
-
-// 升级潜水艇
-MoveTo 750, 315
-Delay quickClickWait
-LeftClick 1
-Delay timeWait
-KeyPress "/", 1//001升级
-Delay timeWait
-MoveTo 750, 260
-Delay quickClickWait
-LeftClick 1
-Delay timeWait
-KeyPress "/", 1//001升级
-Delay timeWait
-MoveTo 490, 630
-Delay quickClickWait
-LeftClick 1
-Delay timeWait
+Call PushTower(660, 240, "K", 0, 0, 2) // 002 猴村
+Call PushTower(580, 240, "K", 1, 0, 2)// 102 猴村
+Call PushTower(550, 325, "A", 0, 2, 3) // 023法师
+Call PressStartButton() // 开始游戏
+Call PushTower(610, 325, "U", 0, 0, 0) // // 放置英雄
+Call PressStartButton() // 加速游戏
+Call PushTower(675, 325, "F", 4, 0, 1) // 401炼金
+Call PushTower(740, 310, "X", 2, 0, 3) // 203潜艇
+Call PushTower(740, 260, "X", 2, 0, 3) // 203潜艇
+Call SeelToower(680, 240) // 出售猴村1
+Call SeelToower(580, 250) // 出售猴村2
+Call UpgradeTower(740, 310, 0, 0, 1) // 升级潜水艇1
+Call UpgradeTower(740, 260, 0, 0, 1) // 升级潜水艇2
 
 // 可自定义部分 =-=-= 可攒经验之类的
 
-KeyPress "Q", 1//开视野飞镖
-Delay timeWait
-MoveTo 340, 550
-Delay quickClickWait
-LeftClick 1
-Delay timeWait
-LeftClick 1
-Delay timeWait
-KeyPress "/", 1//001升级
-Delay timeWait
-KeyPress "/", 1//001升级
-Delay timeWait
-
-KeyPress "Q", 1//开视野飞镖
-Delay timeWait
-MoveTo 340, 265
-Delay quickClickWait
-LeftClick 1
-Delay timeWait
-LeftClick 1
-Delay timeWait
-KeyPress "/", 1//001升级
-Delay timeWait
-KeyPress "/", 1//001升级
-Delay timeWait
+Call PushTower(340, 550, "Q", 0, 0, 2) // 002飞镖
+Call PushTower(340, 265, "Q", 0, 0, 2) // 002飞镖
 
 // ↓ 在这里可自定义刷什么猴子的经验 ↓
 
@@ -274,36 +181,42 @@ Delay timeWait
 
 // ↑ 在这里可自定义刷什么猴子的经验 ↑
 
-KeyPress "Esc", 1
 MoveTo 635, 640
 
 // =-=-=-= 完成布阵 =-=-=-=
 
 Rem 判断游戏是否结束
-FindColor 5,30,55,120,"20262D",intX,intY
+
+FindColorEx 5,30,55,1080,"20262D",0, 0.95, intX,intY
 If intX > 0 And intY > 0 Then 
-	// 获胜
-    Delay 350
-	MoveTo 635, 640
-    Delay quickClickWait
-	LeftClick 1
-    Delay 350
-	MoveTo 480, 600
-    Delay quickClickWait
-    LeftClick 1
-	Delay 300
-Else 
-	FindColor 0, 30, 60, 100, "26323D", upgradePosx, upgradePosy
-	If upgradePosx > 0 And upgradePosy > 0 Then 
+	IfColor 111 ,660, "2152A4", 2 Then // 检测是否为升级
 		Delay 55
 		MoveTo 635, 640
 		Delay 300
 		LeftClick 1
 		Delay quickClickWait
 		LeftClick 1
+		Goto 判断游戏是否结束
 		// 这里判断是否突然升级 ：点两下取消升级页面
+	Else
+		// 找到颜色点,判定获胜
+    	Delay (250 + timeWait) // 等待弹出动画
+    	
+		MoveTo 635, 640
+    	Delay quickClickWait
+		LeftClick 1
+    	Delay (250 + timeWait) // 等待弹出动画
+    	// 点击下一页
+    	
+		MoveTo 480, 600
+    	Delay quickClickWait
+    	LeftClick 1
+		Delay (250 + timeWait)
+		// 点击返回主页
 	End If
-	Delay 400
+	
+	Delay 500// 延迟检测
+Else 
 	Goto 判断游戏是否结束
 End If
 
