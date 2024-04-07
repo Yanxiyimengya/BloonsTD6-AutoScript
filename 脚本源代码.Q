@@ -1,17 +1,82 @@
 // 此脚本代码由烟汐忆梦_YM重构 免费开放使用
 Global openAutoJumpTurn // 记录是否打开自动开始
 openAutoJumpTurn = false
+Global quickClickWait// 快速点击延迟速度(优化点击用)
+
+
 UserVar timeWait = 140 "点击延迟速度"
 UserVar loadingWait = 10 "黑屏加载等待延迟时间"
-UserVar delayedStart = DropList{"开启":true |"关闭":false } = 1 "延迟开始（避免布阵时升级导致脚本失败）" 
-Global quickClickWait // 快速点击延迟速度(优化点击用)
+UserVar delayedStart = DropList{"开启":true |"关闭":false } = 2 "延迟开始（避免布阵时升级导致脚本失败）" 
+UserVar lineup = DropList{"挂机猴钞":"猴钞" |"钉塔刷经验":"经验" } = 1 "阵容" 
+UserVar upgradedMonkey = DropList{"飞镖猴":"Q"|"回旋镖猴":"W"|"大炮":"E"|"图钉塔":"R"|"冰猴":"T"|"胶水炮手":"Y"|"狙击手猴":"Z"|"猴子潜艇":"X"|"海盗猴":"C"|"皇家飞行员":"V"|"直升机飞行员":"B"|"迫击炮猴":"N"|"机枪猴":"M"|"法师猴":"A"|"超猴侠":"S"|"忍者猴":"D"|"炼金术士":"F"|"德鲁伊":"G"|"香蕉农场":"H"|"工程师猴":"L"|"刺钉工厂":"J"|"猴子村":"K"|"野兽之主":"I"} = 1 "想刷经验的猴子(仅钉塔刷经验模式有效)" 
+
 quickClickWait = timeWait * 0.65// 计算优化延迟
 
-Const BoardColor = "52505F" // 判断是否过关时候用
-Const BoardColorDark = "52505F" // 判断是否升级时候用
-
-//Const BoardColor2 = "26202D" // 判断是否过关时候用
-//Const BoardColorDark2 = "26323D"// 判断是否升级时候用
+Function SelectMap(difficulty, mapID)
+	inPageID = mapID Mod 6 // 取模获得页面ID
+	page = mapID \ 6 // 整除获取所在页面ID
+	
+	MoveTo 380, 690
+	Delay 20
+	LeftClick 1
+	Delay 20// 先点一下"新手页面"重置一下页面类信息
+	
+	Select Case difficulty
+		Case 0
+			MoveTo 555, 690
+			Delay 20
+			LeftClick 1
+			Delay 20
+			//点"中级"
+			MoveTo 380, 690
+			Delay 20
+			LeftClick 1
+			Delay 20
+			// 再点新手页面
+		Case 1
+			MoveTo 555, 690 //点"中级"
+			Delay 20
+			LeftClick 1
+			Delay 20
+		Case 2
+			MessageBox "高级"
+			MoveTo 740, 690 //点"高级"
+			Delay 20
+			LeftClick 1
+			Delay 20
+		Case 3
+			MoveTo 890, 690 //点"专家"
+			Delay 20
+			LeftClick 1
+			Delay 20
+	End Select
+	
+	For page
+		Delay 20
+		LeftClick 1
+	Next
+	Delay 20 // 进入地图所在页面
+	
+	Select Case inPageID
+		Case 1
+			MoveTo 358, 222 // 将光标移动到第1个地图
+		Case 2
+			MoveTo 641, 222 // 将光标移动到第2个地图
+		Case 3
+			MoveTo 924, 222// 将光标移动到第3个地图
+		Case 4
+			MoveTo 358, 400 // 将光标移动到第4个地图
+		Case 5
+			MoveTo 641, 400 // 将光标移动到第5个地图
+		Case 6
+			MoveTo 924, 400// 将光标移动到第6个地图
+	End Select
+	Delay 20
+	
+	LeftClick 1
+	Delay timeWait // 点击进入
+	
+End Function // 进入指定的地图
 
 Function PressStartButton()
 	MoveTo 1222, 713
@@ -28,15 +93,15 @@ Function PushTower(posx, posy, key, levelUP0, levelUP1, levelUP2)
 	Delay quickClickWait
 	LeftClick 1 // 选中
 	For levelUP0
-		Delay quickClickWait 
+		Delay 20 
 		KeyPress ",", 1// 001升级
 	EndFor
 	For levelUP1
-		Delay quickClickWait 
+		Delay 20 
 		KeyPress ".", 1// 001升级
 	EndFor
 	For levelUP2
-		Delay quickClickWait 
+		Delay 20 
 		KeyPress "/", 1// 001升级
 	Next
 	Delay quickClickWait
@@ -73,36 +138,65 @@ Function UpgradeTower(posx, posy, levelUP0, levelUP1, levelUP2)
 End Function
 
 Function CombatReadinessEvent()
-	
-	// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=						刷猴钞模式
-	Call PushTower(660, 240, "K", 0, 0, 2) // 002 猴村
-	Call PushTower(580, 240, "K", 1, 0, 2)// 102 猴村
-	Call PushTower(550, 325, "A", 0, 2, 3)// 023法师
-	// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=						刷猴钞模式
+
+	Select Case lineup
+		Case "猴钞"
+			// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=						刷猴钞模式
+			Call PushTower(660, 240, "K", 0, 0, 2) // 002 猴村
+			Call PushTower(580, 240, "K", 1, 0, 2)// 102 猴村
+			Call PushTower(550, 325, "A", 0, 2, 3)// 023法师
+		Case "经验"
+			// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=						刷经验模式
+			Call PushTower(1035, 455, "K", 0, 0, 2)// 002猴村
+			Call PushTower(1020, 390, "J", 4, 2, 0) // 420刺钉
+			Call PushTower(1020, 335, "F", 4, 2, 0) // 420炼金
+			Call SeelToower(1035, 455)// 出售猴村2
+			
+			If (upgradedMonkey = "X" Or upgradedMonkey = "C") Then 
+				// 水军猴子 775 560
+				Call PushTower(775, 550, upgradedMonkey, 5, 5, 5) // 出猴子
+			Else 
+				// 陆地猴子 600 560
+				Call PushTower(600, 540, upgradedMonkey, 5, 5, 5) // 出猴子
+			End If
+			
+			
+			
+	End Select
 	
 End Function // 战斗准备时触发函数
 
 Function StartingEvent()
 	
-	// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=						刷猴钞模式
-	Call PushTower(610, 325, "U", 0, 0, 0)// // 放置英雄
-	// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=						刷猴钞模式
+	Select Case lineup
+		Case "猴钞"
+			// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=						刷猴钞模式
+			Call PushTower(610, 325, "U", 0, 0, 0)// // 放置英雄
+		Case "经验"
+			// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=						刷经验模式 (不做任何事情)
+	End Select
 	
 End Function// 开始战斗时候触发函数
 
 Function AccelerationModeEvent()
+
+	Select Case lineup
+		Case "猴钞"
+			// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=						刷猴钞模式
+			Call PushTower(675, 325, "F", 4, 0, 1) // 401炼金
+			Call PushTower(740, 310, "X", 2, 0, 3) // 203潜艇
+			Call PushTower(740, 260, "X", 2, 0, 3) // 203潜艇
+			Call SeelToower(680, 240) // 出售猴村1
+			Call SeelToower(580, 250) // 出售猴村2
+			Call UpgradeTower(740, 310, 0, 0, 1) // 升级潜水艇1
+			Call UpgradeTower(740, 260, 0, 0, 1)// 升级潜水艇
+			Call PushTower(340, 550, "Q", 0, 0, 2) // 002飞镖
+			Call PushTower(340, 265, "Q", 0, 0, 2) // 002飞镖
+		Case "经验"
+			// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=						刷经验模式
+			
+	End Select
 	
-	// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=						刷猴钞模式
-	Call PushTower(675, 325, "F", 4, 0, 1) // 401炼金
-	Call PushTower(740, 310, "X", 2, 0, 3) // 203潜艇
-	Call PushTower(740, 260, "X", 2, 0, 3) // 203潜艇
-	Call SeelToower(680, 240) // 出售猴村1
-	Call SeelToower(580, 250) // 出售猴村2
-	Call UpgradeTower(740, 310, 0, 0, 1) // 升级潜水艇1
-	Call UpgradeTower(740, 260, 0, 0, 1)// 升级潜水艇
-	Call PushTower(340, 550, "Q", 0, 0, 2) // 002飞镖
-	Call PushTower(340, 265, "Q", 0, 0, 2) // 002飞镖
-	// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=						刷猴钞模式
 	
 End Function // 开始加速时候触发函数
 
@@ -114,21 +208,7 @@ LeftClick 1
 Delay timeWait
 // 进入选关页面
 
-MoveTo 380, 685 //先点一下"新手页面"重置页面类信息
-Delay quickClickWait
-LeftClick 1
-Delay quickClickWait
-MoveTo 891, 686 //点两下"专家" 切换到"黑暗城堡所在的页面" (专家二号页)
-Delay quickClickWait
-LeftClick 1
-Delay quickClickWait
-LeftClick 1
-Delay timeWait
-
-MoveTo 365, 400 //点黑暗城堡
-Delay timeWait
-LeftClick 1
-Delay timeWait
+Call SelectMap(3, 10) // 进入专家模式的第10个地图 也就是黑暗城堡
 MoveTo 410, 300 //点简单
 Delay quickClickWait
 LeftClick 1
