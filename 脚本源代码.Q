@@ -3,6 +3,7 @@ Global openAutoJumpTurn // 记录是否打开自动开始
 openAutoJumpTurn = false
 UserVar timeWait = 140 "点击延迟速度"
 UserVar loadingWait = 10 "黑屏加载等待延迟时间"
+UserVar delayedStart = DropList{"开启":true |"关闭":false } = 1 "延迟开始（避免布阵时升级导致脚本失败）" 
 Global quickClickWait // 快速点击延迟速度(优化点击用)
 quickClickWait = timeWait * 0.65// 计算优化延迟
 
@@ -70,6 +71,40 @@ Function UpgradeTower(posx, posy, levelUP0, levelUP1, levelUP2)
 	Delay timeWait
 	KeyPress "Esc", 1 // 退出页面
 End Function
+
+Function CombatReadinessEvent()
+	
+	// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=						刷猴钞模式
+	Call PushTower(660, 240, "K", 0, 0, 2) // 002 猴村
+	Call PushTower(580, 240, "K", 1, 0, 2)// 102 猴村
+	Call PushTower(550, 325, "A", 0, 2, 3)// 023法师
+	// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=						刷猴钞模式
+	
+End Function // 战斗准备时触发函数
+
+Function StartingEvent()
+	
+	// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=						刷猴钞模式
+	Call PushTower(610, 325, "U", 0, 0, 0)// // 放置英雄
+	// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=						刷猴钞模式
+	
+End Function// 开始战斗时候触发函数
+
+Function AccelerationModeEvent()
+	
+	// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=						刷猴钞模式
+	Call PushTower(675, 325, "F", 4, 0, 1) // 401炼金
+	Call PushTower(740, 310, "X", 2, 0, 3) // 203潜艇
+	Call PushTower(740, 260, "X", 2, 0, 3) // 203潜艇
+	Call SeelToower(680, 240) // 出售猴村1
+	Call SeelToower(580, 250) // 出售猴村2
+	Call UpgradeTower(740, 310, 0, 0, 1) // 升级潜水艇1
+	Call UpgradeTower(740, 260, 0, 0, 1)// 升级潜水艇
+	Call PushTower(340, 550, "Q", 0, 0, 2) // 002飞镖
+	Call PushTower(340, 265, "Q", 0, 0, 2) // 002飞镖
+	// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=						刷猴钞模式
+	
+End Function // 开始加速时候触发函数
 
 Rem 起始点
 
@@ -155,33 +190,23 @@ If openAutoJumpTurn = false Then
 	Delay 150
 	End If
 End If
+Delay 150
 
-Call PushTower(660, 240, "K", 0, 0, 2) // 002 猴村
-Call PushTower(580, 240, "K", 1, 0, 2)// 102 猴村
-Call PushTower(550, 325, "A", 0, 2, 3) // 023法师
-Call PressStartButton() // 开始游戏
-Call PushTower(610, 325, "U", 0, 0, 0) // // 放置英雄
-Call PressStartButton() // 加速游戏
-Call PushTower(675, 325, "F", 4, 0, 1) // 401炼金
-Call PushTower(740, 310, "X", 2, 0, 3) // 203潜艇
-Call PushTower(740, 260, "X", 2, 0, 3) // 203潜艇
-Call SeelToower(680, 240) // 出售猴村1
-Call SeelToower(580, 250) // 出售猴村2
-Call UpgradeTower(740, 310, 0, 0, 1) // 升级潜水艇1
-Call UpgradeTower(740, 260, 0, 0, 1) // 升级潜水艇2
+Call CombatReadinessEvent()
+Call PressStartButton() // 开始游戏 =-=-=-=
+Call StartingEvent()
+Call PressStartButton()// 加速游戏 =-=-=-=
+Call AccelerationModeEvent()
+
 
 // 可自定义部分 =-=-= 可攒经验之类的
-
-Call PushTower(340, 550, "Q", 0, 0, 2) // 002飞镖
-Call PushTower(340, 265, "Q", 0, 0, 2) // 002飞镖
-
 // ↓ 在这里可自定义刷什么猴子的经验 ↓
 
 // ...
 
 // ↑ 在这里可自定义刷什么猴子的经验 ↑
 
-MoveTo 635, 640
+MoveTo 640, 640
 
 // =-=-=-= 完成布阵 =-=-=-=
 
@@ -190,20 +215,21 @@ Rem 判断游戏是否结束
 FindColorEx 5,30,55,1080,"20262D",0, 0.95, intX,intY
 If intX > 0 And intY > 0 Then 
 	IfColor 111 ,660, "2152A4", 2 Then // 检测是否为升级
-		Delay 55
-		MoveTo 635, 640
+		Delay timeWait
+		MoveTo 640, 640
 		Delay 300
 		LeftClick 1
 		Delay quickClickWait
 		LeftClick 1
+		Delay 300
 		Goto 判断游戏是否结束
 		// 这里判断是否突然升级 ：点两下取消升级页面
 	Else
 		// 找到颜色点,判定获胜
     	Delay (250 + timeWait) // 等待弹出动画
-    	
-		MoveTo 635, 640
+    	MoveTo 640, 640
     	Delay quickClickWait
+    	MoveTo 640, 640
 		LeftClick 1
     	Delay (250 + timeWait) // 等待弹出动画
     	// 点击下一页
