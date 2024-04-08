@@ -202,11 +202,11 @@ End Function // 开始加速时候触发函数
 
 Rem 起始点
 
-MoveTo 560, 655//点开始
-Delay timeWait
+MoveTo 555, 660
+Delay quickClickWait
 LeftClick 1
 Delay timeWait
-// 进入选关页面
+// 点开始 进入选关页面
 
 Call SelectMap(3, 10) // 进入专家模式的第10个地图 也就是黑暗城堡
 MoveTo 410, 300 //点简单
@@ -258,19 +258,18 @@ If openAutoJumpTurn = false Then
 	MoveTo 1063, 65
 	Delay quickClickWait
 	LeftClick 1 // 打开设置检测
-	Delay 150
-	IfColor 735, 190, "00EB77", 2 Then// 加载时 检测屏幕点 近似等于绿色 就说明已经启用 
-		Delay quickClickWait
+	Delay timeWait
+	IfColor 918, 240, "FFD400", 2 Then// 加载时 检测屏幕点 蓝色 就说明已经启用 
 	Else 
-		MoveTo 735, 190
+		MoveTo 895, 240
 		Delay quickClickWait
 		LeftClick 1 // 打开自动开始
+	End If
+	Delay quickClickWait
 	openAutoJumpTurn = true
 	KeyPress "Esc", 1
-	Delay 150
-	End If
 End If
-Delay 150
+Delay timeWait
 
 Call CombatReadinessEvent()
 Call PressStartButton() // 开始游戏 =-=-=-=
@@ -292,7 +291,7 @@ MoveTo 640, 640
 
 Rem 判断游戏是否结束
 
-FindColorEx 5,30,55,1080,"20262D",0, 0.95, intX,intY
+FindColorEx 5,30,55,455,"20262D",0, 0.96, intX,intY
 If intX > 0 And intY > 0 Then 
 	IfColor 111 ,660, "2152A4", 2 Then // 检测是否为升级
 		Delay timeWait
@@ -306,7 +305,8 @@ If intX > 0 And intY > 0 Then
 		// 这里判断是否突然升级 ：点两下取消升级页面
 	Else
 		// 找到颜色点,判定获胜
-    	Delay (250 + timeWait) // 等待弹出动画
+    	Delay (250 + timeWait)// 等待弹出动画
+    	KeyPress "Esc", 1
     	MoveTo 640, 640
     	Delay quickClickWait
     	MoveTo 640, 640
