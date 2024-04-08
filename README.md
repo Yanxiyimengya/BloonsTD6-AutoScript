@@ -8,7 +8,9 @@
 
 将游戏窗口化,并置于屏幕左上角,将分辨率设置为**1280*720**点击启动脚本即可
 
-BiliBIili原文章链接https://www.bilibili.com/read/preview/33627080
+BiliBili原文章链接  https://www.bilibili.com/read/preview/33627080
+BiliBili脚本演示视频 https://www.bilibili.com/video/BV1W1421o7sQ/
+
 
 
 
