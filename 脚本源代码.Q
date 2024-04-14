@@ -3,14 +3,32 @@ Global openAutoJumpTurn // 记录是否打开自动开始
 openAutoJumpTurn = false
 Global quickClickWait// 快速点击延迟速度(优化点击用)
 
-
 UserVar timeWait = 140 "点击延迟速度"
 UserVar loadingWait = 10 "黑屏加载等待延迟时间"
-UserVar delayedStart = DropList{"开启":true |"关闭":false } = 2 "延迟开始（避免布阵时升级导致脚本失败）" 
-UserVar lineup = DropList{"挂机猴钞":"猴钞" |"钉塔刷经验":"经验" } = 1 "阵容" 
-UserVar upgradedMonkey = DropList{"飞镖猴":"Q"|"回旋镖猴":"W"|"大炮":"E"|"图钉塔":"R"|"冰猴":"T"|"胶水炮手":"Y"|"狙击手猴":"Z"|"猴子潜艇":"X"|"海盗猴":"C"|"皇家飞行员":"V"|"直升机飞行员":"B"|"迫击炮猴":"N"|"机枪猴":"M"|"法师猴":"A"|"超猴侠":"S"|"忍者猴":"D"|"炼金术士":"F"|"德鲁伊":"G"|"香蕉农场":"H"|"工程师猴":"L"|"刺钉工厂":"J"|"猴子村":"K"|"野兽之主":"I"} = 1 "想刷经验的猴子(仅钉塔刷经验模式有效)" 
+UserVar checkAutoStart = DropList{"开启":1 |"关闭":0} = 0 "自动检查自动开始模式" 
+UserVar delayedStart = DropList{"开启":1 |"关闭":0 } = 1 "延迟开始（避免布阵时升级导致脚本失败）" 
+UserVar lineup = DropList{"挂机猴钞":"猴钞" |"钉塔刷经验":"经验" } = 0 "阵容" 
+UserVar upgradedMonkey = DropList{"飞镖猴":"Q"|"回旋镖猴":"W"|"大炮":"E"|"图钉塔":"R"|"冰猴":"T"|"胶水炮手":"Y"|"狙击手猴":"Z"|"猴子潜艇":"X"|"海盗猴":"C"|"皇家飞行员":"V"|"直升机飞行员":"B"|"迫击炮猴":"N"|"机枪猴":"M"|"法师猴":"A"|"超猴侠":"S"|"忍者猴":"D"|"炼金术士":"F"|"德鲁伊":"G"|"香蕉农场":"H"|"工程师猴":"L"|"刺钉工厂":"J"|"猴子村":"K"|"野兽之主":"I"} = 0 "想刷经验的猴子(仅钉塔刷经验模式有效)" 
 
 quickClickWait = timeWait * 0.65// 计算优化延迟
+animWait = timeWait
+If animWait < 300 Then 
+	animWait = 300
+End If
+
+Dim platforms(3)
+platforms(0) = "BloonsTD6"
+platforms(1) = "BloonsTD6-Epic"
+platforms(2) = 0
+Function GetHwnd()
+    hwnd = 0// 气球塔防6窗口hwnd
+    loopCount = 0
+    While (hwnd = 0 Or loopCount < 3)
+    	hwnd = Plugin.Window.Find("UnityWndClass", platforms(0))
+    	loopCount = loopCount + 1
+    Wend
+    GetHwnd = hwnd
+End Function // 获取游戏窗口句柄
 
 Function SelectMap(difficulty, mapID)
 	inPageID = mapID Mod 6 // 取模获得页面ID
@@ -39,7 +57,6 @@ Function SelectMap(difficulty, mapID)
 			LeftClick 1
 			Delay 20
 		Case 2
-			MessageBox "高级"
 			MoveTo 740, 690 //点"高级"
 			Delay 20
 			LeftClick 1
@@ -201,7 +218,10 @@ Function AccelerationModeEvent()
 End Function // 开始加速时候触发函数
 
 Rem 起始点
-
+LockMouse // 锁定鼠标
+bdt6HWND = GetHwnd() // 获取窗口句柄
+Call Plugin.Window.Move(bdt6HWND, -7, 0) // 将窗口移动至显示屏左上角
+   
 MoveTo 555, 660
 Delay quickClickWait
 LeftClick 1
@@ -238,7 +258,7 @@ IfColor 485,450,"000000",0 Then // 加载时 检测屏幕点 如果为黑色 就
     Delay 310
     Goto 加载时判断屏幕颜色为黑色
 End If
-Delay (450 + loadingWait)
+Delay (animWait + loadingWait)
 
 Rem 检测弹窗弹出正常
 IfColor 635, 460, "D5915C", 2 Then
@@ -253,23 +273,24 @@ Delay 800
 
 // =-=-=-= 游戏开始 =-=-=-=
 
-If openAutoJumpTurn = false Then
+TracePrint openAutoJumpTurn
+TracePrint checkAutoStart
+
+If (openAutoJumpTurn = false And checkAutoStart = 1) Then
 	// 判断自动开始是否打开	
-	MoveTo 1063, 65
-	Delay quickClickWait
-	LeftClick 1 // 打开设置检测
-	Delay timeWait
-	IfColor 918, 240, "FFD400", 2 Then// 加载时 检测屏幕点 蓝色 就说明已经启用 
-	Else 
-		MoveTo 895, 240
+	KeyPress "Esc", 1
+	Delay animWait
+	FindColorEx 835 ,220, 940, 240,"00EC78",0, 0.86, autoJumpX, autoJumpY// 加载时 检测屏幕点 蓝色 就说明已经启用 
+	If Not (autoJumpX > 0 And autoJumpY > 0)  Then 
+		MoveTo 890, 243
 		Delay quickClickWait
 		LeftClick 1 // 打开自动开始
+		Delay quickClickWait
 	End If
-	Delay quickClickWait
-	openAutoJumpTurn = true
+	openAutoJumpTurn = 1 // 设置不再自动检测
 	KeyPress "Esc", 1
+	Delay timeWait
 End If
-Delay timeWait
 
 Call CombatReadinessEvent()
 Call PressStartButton() // 开始游戏 =-=-=-=
@@ -286,21 +307,22 @@ Call AccelerationModeEvent()
 // ↑ 在这里可自定义刷什么猴子的经验 ↑
 
 MoveTo 640, 640
+UnlockMouse // 解除锁定鼠标
 
 // =-=-=-= 完成布阵 =-=-=-=
 
 Rem 判断游戏是否结束
-
-FindColorEx 5,30,55,455,"20262D",0, 0.96, intX,intY
+FindColorEx 5,30,30,60,"232F39",0, 0.92, intX,intY
 If intX > 0 And intY > 0 Then 
-	IfColor 111 ,660, "2152A4", 2 Then // 检测是否为升级
+	FindColorEx 5,420,280,750,"254D9B",0, 0.9, lvUPX, lvUPY // 检测是否为升级
+	If lvUPX > 0 And lvUPY > 0 Then 
 		Delay timeWait
 		MoveTo 640, 640
 		Delay 300
 		LeftClick 1
 		Delay quickClickWait
 		LeftClick 1
-		Delay 300
+		Delay (550 + timeWait)
 		Goto 判断游戏是否结束
 		// 这里判断是否突然升级 ：点两下取消升级页面
 	Else
@@ -335,5 +357,12 @@ End If
 Delay (420 + loadingWait)
 // 重复
 Goto 起始点
+
+
+
+Rem 结束脚本
+
+EndScript
 // 此脚本代码由烟汐忆梦_YM重构 免费开放使用
 // BiliBili主页 https://space.bilibili.com/481430814?spm_id_from=333.788.0.0
+
