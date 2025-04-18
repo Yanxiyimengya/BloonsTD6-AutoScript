@@ -222,7 +222,7 @@ LockMouse // 锁定鼠标
 bdt6HWND = GetHwnd() // 获取窗口句柄
 Call Plugin.Window.Move(bdt6HWND, -7, 0) // 将窗口移动至显示屏左上角
    
-MoveTo 555, 660
+MoveTo 655, 660
 Delay quickClickWait
 LeftClick 1
 Delay timeWait
